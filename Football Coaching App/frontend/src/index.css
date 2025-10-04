@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+
+    --background: 0 0% 100%; /* White */
+    --foreground: 187 100% 50%; /* Cyan (#06B6D4) */
+    --primary: 187 100% 50%; /* Cyan for all primary elements */
+    --accent: 187 95% 72%; /* Light Cyan */
+    
+    
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --radius: 8px;
+  }
+
+
+  body {
+    @apply bg-background text-primary;
+    font-family: 'Inter', sans-serif;
+  }
+
+  button {
+    @apply bg-primary text-white rounded-md px-4 py-2 hover:bg-accent transition;
+  }
+
+  
+  input[type="text"],
+  input[type="search"] {
+    @apply border border-input rounded-md p-2 bg-white text-primary;
+  }
+
+
+  .icon {
+    @apply text-primary cursor-pointer hover:text-accent transition;
+  }
+
+
+  .header-bar {
+    @apply flex items-center justify-between bg-white shadow-md px-6 py-3;
+  }
+}
