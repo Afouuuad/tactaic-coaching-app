@@ -2,89 +2,99 @@ import User from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// Register a new user
+// @desc    Register a new user (Coach or Player)
+// @route   POST /api/auth/register
 export const register = async (req, res) => {
   try {
-    const { firstName, surname, email, phoneNumber, location, password, role } = req.body;
+    const { name, email, password, role } = req.body;
 
-    // Normalize email
-    const normalizedEmail = email.toLowerCase().trim();
-
-    // Check if the email is already registered
-    const existingUser = await User.findOne({ email: normalizedEmail });
-    if (existingUser) {
-      return res.status(400).json({ error: 'Email is already registered' });
+    // Basic validation
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({ message: 'Please provide name, email, password, and role.' });
     }
 
-    // Hash the password before saving
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Validate role
+    if (!['coach', 'player'].includes(role)) {
+        return res.status(400).json({ message: "Invalid role. Must be 'coach' or 'player'." });
+    }
+    
+    // Check if the user already exists
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    if (existingUser) {
+      return res.status(400).json({ message: 'An account with this email already exists.' });
+    }
 
+    // Hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create the new user
     const user = new User({
-      firstName,
-      surname,
-      email: normalizedEmail,
-      phoneNumber,
-      location,
+      name,
+      email: email.toLowerCase(),
       password: hashedPassword,
       role,
     });
 
     await user.save();
-    res.status(201).json({ message: 'User registered successfully' });
+    res.status(201).json({ message: 'User registered successfully. You can now log in.' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: 'Server Error: Could not register user.', error: err.message });
   }
 };
 
-// Login a user
+// @desc    Authenticate a user and get a token
+// @route   POST /api/auth/login
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     // Validate input
     if (!email || !password) {
-      console.error("Login failed: Missing email or password");
-      return res.status(400).json({ message: 'Email and password are required' });
+      return res.status(400).json({ message: 'Please provide both email and password.' });
     }
-
-    // Normalize email
-    const normalizedEmail = email.toLowerCase().trim();
-    console.log("Normalized email:", normalizedEmail); // Debugging log
 
     // Find the user by email
-    const user = await User.findOne({ email: normalizedEmail });
-    console.log("User found:", user); // Debugging log
+    const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
-      console.error("Login failed: User not found");
-      return res.status(404).json({ message: 'Incorrect email or password' });
+      return res.status(401).json({ message: 'Invalid credentials.' }); // Generic message for security
     }
 
-    // Compare the provided password with the hashed password
+    // Compare the provided password with the stored hashed password
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log("Password match result:", isMatch); // Debugging log
     if (!isMatch) {
-      console.error("Login failed: Invalid password");
-      return res.status(401).json({ message: 'Incorrect email or password' });
+      return res.status(401).json({ message: 'Invalid credentials.' }); // Generic message
     }
 
     // Generate a JWT token
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      { id: user._id, role: user.role, name: user.name },
       process.env.JWT_SECRET,
-      { expiresIn: '1d' }
+      { expiresIn: '1d' } // Token expires in 1 day
     );
 
-    res.json({ access_token: token, user });
+    // Return the token and user info (excluding password)
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (err) {
-    console.error("Error during login:", err);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Server Error: Could not log in.', error: err.message });
   }
 };
 
-// Get the authenticated user's details
-export const getMe = (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({ error: 'Not authenticated' });
+// @desc    Get the current authenticated user's details
+// @route   GET /api/auth/me
+export const getMe = async (req, res) => {
+  // The 'protect' middleware should have already attached the user to the request object
+  if (req.user) {
+    res.json(req.user);
+  } else {
+    res.status(404).json({ message: 'User not found or not authenticated.' });
   }
-  res.json({ user: req.user });
 };

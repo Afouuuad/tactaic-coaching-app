@@ -6,6 +6,7 @@ import Home from './components/Home/Home';
 import Login from './components/auth/Login';
 import Signup from './components/auth/Signup';
 import AdminDashboard from './components/admin/AdminDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // --- Feature Pages (Refactored) ---
 import Events from './components/events/Events'; 
@@ -23,19 +24,20 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-
-        {/* --- Event-Related Routes --- */}
-        <Route path="/events" element={<Events />} />
-        <Route path="/events/:id" element={<EventDetails />} />
-        <Route path="/create-event" element={<CreateEvent />} />
         
-        {/* --- Team & Plan Routes --- */}
-        <Route path="/team" element={<Team />} />
-        <Route path="/activities" element={<ActivityLibrary />} />
-
-        {/* --- User & Admin Routes --- */}
-        <Route path="/notifications" element={<Notifications />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        {/* --- Protected Routes --- */}
+        <Route element={<ProtectedRoute />}>
+          {/* --- Event-Related Routes --- */}
+          <Route path="/events" element={<Events />} />
+          <Route path="/events/:id" element={<EventDetails />} />
+          <Route path="/create-event" element={<CreateEvent />} />
+          
+          {/* --- Team & Plan Routes --- */}
+          <Route path="/team" element={<Team />} />
+          <Route path="/activities" element={<ActivityLibrary />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+        </Route>
 
       </Routes>
     </Router>

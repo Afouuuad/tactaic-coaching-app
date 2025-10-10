@@ -1,16 +1,15 @@
 import express from 'express';
-import { register, login } from '../controllers/auth.controller.js';
+import { register, login, getMe } from '../controllers/auth.controller.js';
 import { protect } from '../middlewares/auth.middleware.js';
-import { getMe } from '../controllers/auth.controller.js';
-import { authenticateUser } from '../middlewares/auth.middleware.js';
-import { getCurrentUser } from '../controllers/auth.controller.js';
 
 const router = express.Router();
 
-router.get('/me', protect, getMe);
+// Public routes for user registration and login
 router.post('/register', register);
 router.post('/login', login);
-router.get("/me", authenticateUser, getCurrentUser);
+
+// Protected route to get the current authenticated user's details.
+// It uses the 'protect' middleware to ensure the user is logged in.
+router.get('/me', protect, getMe);
 
 export default router;
-
