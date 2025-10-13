@@ -4,7 +4,7 @@ import { Facebook, Twitter, Linkedin } from 'lucide-react';
 // A simple Logo component for the footer
 const Logo = () => (
     <span className="text-2xl font-bold text-slate-800">
-        Tact<span className="text-cyan-600">AI</span>c
+        Tact<span className="text-cyan-600">AIQ</span>
     </span>
 );
 

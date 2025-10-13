@@ -74,7 +74,7 @@ const Navbar = () => {
             <Menu size={24} />
           </button>
           <Link to="/" className="text-2xl font-bold text-white">
-            Tact<span className="text-blue-400">AI</span>c
+            Tact<span className="text-blue-400">AIQ</span>
           </Link>
         </div>
 

@@ -1,140 +1,126 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useDispatch } from 'react-redux';
 import axios from 'axios';
-import { PLAYER_API_END_POINT } from '@/utils/constant';
+import { Loader2, Mail, Lock } from 'lucide-react';
 import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
-import { setUser } from '@/redux/authSlice';
+// --- Reusable Input Component for the light theme ---
+const InputField = ({ icon: Icon, type, placeholder, value, onChange, name }) => (
+    <div className="relative">
+        {Icon && (
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Icon className="text-gray-400" size={20} />
+            </div>
+        )}
+        <input
+          type={type}
+          name={name}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          className={`w-full ${Icon ? 'pl-12' : 'pl-4'} pr-4 py-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-800 transition-colors`}
+          required
+        />
+    </div>
+);
 
-/**
- * Signup component for new users to register as either a Coach or a Player.
- */
-const Signup = () => {
-    const [input, setInput] = useState({
-        fullName: "",
-        email: "",
-        password: "",
-        role: "Coach", // Default role is now Coach
-    });
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
+// --- Main Coach Signup Page Component ---
+export default function CoachSignupPage() {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    teamName: "", 
+    role: "Coach", 
+  });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-    const changeEventHandler = (e) => {
-        setInput({ ...input, [e.target.name]: e.target.value });
-    };
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-    const submitHandler = async (e) => {
-        e.preventDefault();
-        try {
-            setLoading(true);
-            const res = await axios.post(`${PLAYER_API_END_POINT}/register`, input, {
-                headers: { 'Content-Type': 'application/json' },
-                withCredentials: true,
-            });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const API_ENDPOINT = "/api/v1/auth/register"; 
+      
+      // Combine firstName and lastName for submission if the backend expects a single 'fullName'
+      const submissionData = {
+          ...formData,
+          fullName: `${formData.firstName} ${formData.lastName}`
+      }
+      // Remove individual first/last name if not needed by backend
+      delete submissionData.firstName;
+      delete submissionData.lastName;
 
-            if (res.data.success) {
-                dispatch(setUser(res.data.user));
-                navigate("/");
-                toast.success(res.data.message);
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error(error.response?.data?.message || "Registration failed. Please try again.");
-        } finally {
-            setLoading(false);
-        }
-    };
+      console.log("Submitting coach registration:", submissionData);
+      toast.info("Registering your coach account...");
 
-    return (
-        <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-            <form onSubmit={submitHandler} className="w-full max-w-md p-8 bg-gray-800 border border-gray-700 shadow-xl rounded-lg space-y-6">
-                <div className="text-center">
-                    <h1 className="text-3xl font-bold text-white">Create an Account</h1>
-                    <p className="text-gray-400 mt-2">Join Tactical Co-Pilot</p>
-                </div>
-                
-                {/* Full Name */}
-                <div>
-                    <Label className="text-lg text-white">Full Name</Label>
-                    <Input
-                        type="text"
-                        name="fullName"
-                        value={input.fullName}
-                        onChange={changeEventHandler}
-                        placeholder="John Doe"
-                        className="mt-2 w-full p-3 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        required
-                    />
-                </div>
+      const res = await axios.post(API_ENDPOINT, submissionData, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      });
 
-                {/* Email */}
-                <div>
-                    <Label className="text-lg text-white">Email</Label>
-                    <Input
-                        type="email"
-                        name="email"
-                        value={input.email}
-                        onChange={changeEventHandler}
-                        placeholder="you@example.com"
-                        className="mt-2 w-full p-3 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        required
-                    />
-                </div>
+      if (res.data.success) {
+        navigate("/"); 
+        toast.success(res.data.message || "Registration successful!");
+      }
+    } catch (error) {
+      console.error("Registration Error:", error);
+      toast.error(error.response?.data?.message || "Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                {/* Password */}
-                <div>
-                    <Label className="text-lg text-white">Password</Label>
-                    <Input
-                        type="password"
-                        name="password"
-                        value={input.password}
-                        onChange={changeEventHandler}
-                        placeholder="••••••••"
-                        className="mt-2 w-full p-3 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        required
-                    />
-                </div>
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 font-sans">
+        <div className="w-full max-w-md">
 
-                {/* Role Selection */}
-                <div>
-                    <Label className="text-lg text-white">Register as a</Label>
-                    <select
-                        name="role"
-                        value={input.role}
-                        onChange={changeEventHandler}
-                        className="mt-2 w-full p-3 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        required
-                    >
-                        <option value="Coach">Coach</option>
-                        <option value="Player">Player</option>
-                    </select>
-                </div>
+        <form onSubmit={handleSubmit} className="p-8 bg-white border border-gray-200 shadow-lg rounded-2xl space-y-6">
+          <div className="text-center mb-6">
+              <Link to="/">
+                <img src="/Logo_2.png" alt="TactAIQ Logo" className="h-[220px] w-auto mx-auto -mt-14 " />
+              </Link>
+              
+              <h1 className="text-3xl font-bold text-gray-7s00  -mt-4">Hi coach!</h1>
+            <p className="text-cyan-500 mt-2">Ready to Master the Plan?</p>
+          </div>
 
-                {/* Submit Button */}
-                <div className="pt-2">
-                    {loading ? (
-                        <Button className="w-full p-4 bg-blue-700" disabled>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing Up...
-                        </Button>
-                    ) : (
-                        <Button type="submit" className="w-full p-4 bg-blue-600 hover:bg-blue-700">
-                            Create Account
-                        </Button>
-                    )}
-                </div>
+          <div className="flex items-center gap-4">
+            <div className="w-1/2">
+                <label className="text-sm font-medium text-gray-700 mb-1 block">First Name</label>
+                <InputField type="text" name="firstName" placeholder="First Name" value={formData.firstName} onChange={handleChange} />
+            </div>
+            <div className="w-1/2">
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Last Name</label>
+                <InputField type="text" name="lastName" placeholder="Last Name" value={formData.lastName} onChange={handleChange} />
+            </div>
+          </div>
+          
+          <InputField type="text" name="teamName" placeholder="Team Name" value={formData.teamName} onChange={handleChange} />
+          <InputField icon={Mail} type="email" name="email" placeholder="Email Address" value={formData.email} onChange={handleChange} />
+          <InputField icon={Lock} type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} />
+          
+          <div className="pt-2">
+            {loading ? (
+              <button className="w-full flex justify-center items-center py-3 px-4 bg-blue-400 text-white font-semibold rounded-lg cursor-not-allowed" disabled>
+                <Loader2 className="mr-3 h-5 w-5 animate-spin" /> Creating Account...
+              </button>
+            ) : (
+              <button type="submit" className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors shadow-md">
+                Create Account
+              </button>
+            )}
+          </div>
 
-                <p className="text-center text-gray-400">
-                    Already have an account? <Link to="/login" className="text-blue-400 hover:underline">Login</Link>
-                </p>
-            </form>
+          <p className="text-center text-sm text-gray-500">
+            Already have an account? <Link to="/login" className="font-medium text-blue-600 hover:underline">Login here</Link>
+          </p>
+        </form>
         </div>
-    );
-};
-
-export default Signup;
-
+    </div>
+  );
+}

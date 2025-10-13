@@ -1,15 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PLAYER_API_END_POINT } from '@/utils/constant'; // 1. Using the correct API endpoint
 import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoading, setUser } from '@/redux/authSlice';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Mail, Lock } from 'lucide-react';
 
+// --- Reusable Input Component (to match Signup page) ---
+const InputField = ({ icon: Icon, type, placeholder, value, onChange, name }) => (
+    <div className="relative">
+        {Icon && (
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Icon className="text-gray-400" size={20} />
+            </div>
+        )}
+        <input
+          type={type}
+          name={name}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          className={`w-full ${Icon ? 'pl-12' : 'pl-4'} pr-4 py-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-800 transition-colors`}
+          required
+        />
+    </div>
+);
 /**
  * Login component for existing users.
  */
@@ -56,59 +72,38 @@ const Login = () => {
     }, [user, navigate]);
 
     return (
-        // 2. Applying dark theme and full-screen layout
-        <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-            <form onSubmit={submitHandler} className="w-full max-w-md p-8 bg-gray-800 border border-gray-700 shadow-xl rounded-lg space-y-6">
-                <div className="text-center">
-                    <h1 className="text-3xl font-bold text-white">Welcome Back</h1>
-                    <p className="text-gray-400 mt-2">Login to your Tactical Co-Pilot account</p>
-                </div>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 font-sans">
+            <div className="w-full max-w-md">
+                <form onSubmit={submitHandler} className="p-8 bg-white border border-gray-200 shadow-lg rounded-2xl space-y-6">
+                    <div className="text-center mb-6">
+                        <Link to="/">
+                            <img src="/Logo_2.png" alt="TactAIQ Logo" className="h-[220px] w-auto mx-auto -mt-14 " />
+                        </Link>
+                        <h1 className="text-3xl font-bold text-gray-800 -mt-4">Welcome Back!</h1>
+                        <p className="text-cyan-500 mt-2">Login to your account</p>
+                    </div>
 
-                {/* Email */}
-                <div>
-                    <Label className="text-lg text-white">Email</Label>
-                    <Input
-                        type="email"
-                        name="email"
-                        value={input.email}
-                        onChange={changeEventHandler}
-                        placeholder="you@example.com"
-                        className="mt-2 w-full p-3 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        required
-                    />
-                </div>
+                    <InputField icon={Mail} type="email" name="email" placeholder="Email Address" value={input.email} onChange={changeEventHandler} />
+                    <InputField icon={Lock} type="password" name="password" placeholder="Password" value={input.password} onChange={changeEventHandler} />
 
-                {/* Password */}
-                <div>
-                    <Label className="text-lg text-white">Password</Label>
-                    <Input
-                        type="password"
-                        name="password"
-                        value={input.password}
-                        onChange={changeEventHandler}
-                        placeholder="••••••••"
-                        className="mt-2 w-full p-3 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        required
-                    />
-                </div>
+                    {/* Submit Button */}
+                    <div className="pt-2">
+                        {loading ? (
+                            <button className="w-full flex justify-center items-center py-3 px-4 bg-blue-400 text-white font-semibold rounded-lg cursor-not-allowed" disabled>
+                                <Loader2 className="mr-3 h-5 w-5 animate-spin" /> Signing In...
+                            </button>
+                        ) : (
+                            <button type="submit" className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors shadow-md">
+                                Login
+                            </button>
+                        )}
+                    </div>
 
-                {/* Submit Button */}
-                <div className="pt-2">
-                    {loading ? (
-                        <Button className="w-full p-4 bg-blue-700" disabled>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
-                        </Button>
-                    ) : (
-                        <Button type="submit" className="w-full p-4 bg-blue-600 hover:bg-blue-700">
-                            Login
-                        </Button>
-                    )}
-                </div>
-
-                <p className="text-center text-gray-400">
-                    Don't have an account? <Link to="/signup" className="text-blue-400 hover:underline">Signup</Link>
-                </p>
-            </form>
+                    <p className="text-center text-sm text-gray-500">
+                        Don't have an account? <Link to="/signup" className="font-medium text-blue-600 hover:underline">Signup here</Link>
+                    </p>
+                </form>
+            </div>
         </div>
     );
 };
