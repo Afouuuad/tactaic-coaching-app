@@ -13,7 +13,8 @@ import Events from './components/events/Events';
 import EventDetails from './components/events/EventDetails';
 import CreateEvent from './components/events/CreateEvent';
 import Team from './components/Team/Team';
-import ActivityLibrary from './components/ActivityLibrary';
+import LibraryHub from './components/library/LibraryHub';
+import LibraryArticle from './components/library/LibraryArticle';
 import Notifications from './components/Notifications';
 import VideoAnalyser from './components/VideoAnalyser';
 import GamePlan from './components/GamePlan/GamePlan';
@@ -94,7 +95,8 @@ function App() {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/game-plan" element={<GamePlan />} />
         <Route path="/video-analyser" element={<VideoAnalyser />} />
-        <Route path="/library" element={<ActivityLibrary />} />
+        <Route path="/library" element={<LibraryHub />} />
+        <Route path="/library/:articleId" element={<LibraryArticle />} />
         <Route path="/telemetry" element={<MatchTelemetry />} />
       </Route>
 
