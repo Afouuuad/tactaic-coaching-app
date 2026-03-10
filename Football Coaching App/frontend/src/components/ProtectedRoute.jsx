@@ -1,17 +1,23 @@
 // ProtectedRoute.jsx
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 
-const ProtectedRoute = ({ children }) => {
-  // Ensure your Redux store has an "auth" slice with a "token" field
-  const token = useSelector((state) => state.auth?.token);
+const ProtectedRoute = () => {
+  const { user, token } = useSelector((state) => state.auth);
 
-  if (!token) {
-    return <Navigate to="/login" />;
+  // If we don't have BOTH a user and a token, they are not fully authenticated
+  if (!user || !token) {
+    return <Navigate to="/login" replace />;
   }
 
-  return children;
+  // If we have a token but no user yet, we might be restoring the session
+  // In this case, we return null (or a spinner) to wait for App.jsx's useEffect
+  if (!user && token) {
+    return null;
+  }
+
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

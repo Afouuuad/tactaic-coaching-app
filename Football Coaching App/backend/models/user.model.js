@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     lowercase: true,
     trim: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
+    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/, 'Please fill a valid email address'],
   },
   password: {
     type: String,
@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['coach', 'player', 'admin'],
+    enum: ['admin', 'coach', 'player'],
     default: 'player',
     required: true,
   },
@@ -30,6 +30,35 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Team',
   }],
+  teamName: {
+    type: String,
+    trim: true,
+    default: null,
+  },
+  teamLogo: {
+    type: String,
+    default: null, // URL of the uploaded team logo
+  },
+  profilePicture: {
+    type: String,
+    default: null, // URL of the uploaded profile picture
+  },
+  yearsOfExperience: {
+    type: Number,
+    default: 0,
+  },
+  coachingLicense: {
+    type: String,
+    trim: true,
+  },
+  specialization: {
+    type: String,
+    trim: true,
+  },
+  bio: {
+    type: String,
+    trim: true,
+  },
 }, {
   timestamps: true, // Adds createdAt and updatedAt timestamps
 });
@@ -40,11 +69,14 @@ userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     return next();
   }
-  
+
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
+
+// const CoachingAppDB = mongoose.connection.useDb('CoachingAppDB');
+// const User = CoachingAppDB.model('User', userSchema);
 
 const User = mongoose.model('User', userSchema);
 

@@ -5,7 +5,8 @@ import {
   getEventById,
   updateEvent,
   deleteEvent,
-  updateAttendance
+  updateAttendance,
+  logMatchResult
 } from '../controllers/event.controller.js';
 import { protect } from '../middlewares/auth.middleware.js';
 
@@ -16,6 +17,7 @@ router.use(protect);
 router.post('/', createEvent);
 router.get('/team/:teamId', getEventsByTeam);
 router.put('/:id/attendance', updateAttendance);
+router.put('/:id/log-match', logMatchResult);
 
 router.route('/:id')
   .get(getEventById)

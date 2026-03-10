@@ -1,0 +1,41 @@
+{
+    "4-3-3_Attack": {
+        "GK": "GK_Goalkeeper",
+        "LB": "FB_FullBack",
+        "LCB": "CB_BallPlaying",
+        "RCB": "CB_Stopper",
+        "RB": "FB_FullBack",
+        "CDM": "CDM_Destroyer",
+        "LCM": "CM_BoxToBox",
+        "RCM": "CAM_Playmaker",
+        "LW": "W_Winger",
+        "ST": "ST_TargetMan",
+        "RW": "W_Winger"
+    },
+    "4-4-2_Classic": {
+        "GK": "GK_Goalkeeper",
+        "LB": "FB_FullBack",
+        "LCB": "CB_Stopper",
+        "RCB": "CB_Stopper",
+        "RB": "FB_FullBack",
+        "LM": "W_Winger",
+        "LCM": "CM_BoxToBox",
+        "RCM": "CM_BoxToBox",
+        "RM": "W_Winger",
+        "LST": "ST_Poacher",
+        "RST": "ST_TargetMan"
+    },
+    "3-5-2_Possession": {
+        "GK": "GK_Goalkeeper",
+        "LCB": "CB_BallPlaying",
+        "CB": "CB_Stopper",
+        "RCB": "CB_BallPlaying",
+        "LWB": "W_Winger",
+        "CDM": "CDM_Destroyer",
+        "LCM": "CM_BoxToBox",
+        "RCM": "CAM_Playmaker",
+        "RWB": "W_Winger",
+        "LST": "ST_Poacher",
+        "RST": "ST_TargetMan"
+    }
+}

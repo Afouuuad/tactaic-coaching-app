@@ -41,6 +41,54 @@ const eventSchema = new mongoose.Schema({
       default: 'Maybe',
     }
   }],
+  // --- New Match Telemetry Fields ---
+  opponent: {
+    type: String,
+    trim: true,
+  },
+  homeAway: {
+    type: String,
+    enum: ['Home', 'Away', 'Neutral'],
+    default: 'Home'
+  },
+  goalsFor: {
+    type: Number,
+    default: 0
+  },
+  goalsAgainst: {
+    type: Number,
+    default: 0
+  },
+  totalAssists: {
+    type: Number,
+    default: 0
+  },
+  setPieceGoalsFor: {
+    type: Number,
+    default: 0
+  },
+  setPieceGoalsAgainst: {
+    type: Number,
+    default: 0
+  },
+  secondHalfGoals: {
+    type: Number,
+    default: 0
+  },
+  benchImpactGoals: {
+    type: Number,
+    default: 0
+  },
+  firstToScore: {
+    type: Boolean,
+    default: false
+  },
+  // We can derive W/D/L and Goal Diff on the frontend or save it here.
+  // For now, simpler to calculate dynamically based on goals.
+  matchLogged: {
+    type: Boolean,
+    default: false
+  }
 }, {
   timestamps: true, // Automatically adds createdAt and updatedAt
 });

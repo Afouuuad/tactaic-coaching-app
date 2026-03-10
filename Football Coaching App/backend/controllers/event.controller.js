@@ -143,38 +143,100 @@ export const deleteEvent = async (req, res) => {
 // @desc    Allow a player to update their attendance for an event
 // @route   PUT /api/events/:id/attendance
 export const updateAttendance = async (req, res) => {
-    try {
-        const { id } = req.params; // eventId
-        const { status } = req.body; // Expecting status: 'Attending', 'Absent', 'Maybe'
-        const userId = req.user._id; // This is the User ID from the token
+  try {
+    const { id } = req.params; // eventId
+    const { status } = req.body; // Expecting status: 'Attending', 'Absent', 'Maybe'
+    const userId = req.user._id; // This is the User ID from the token
 
-        if (!status) {
-            return res.status(400).json({ message: 'Attendance status is required.' });
-        }
-
-        const event = await Event.findById(id);
-        if (!event) {
-            return res.status(404).json({ message: 'Event not found.' });
-        }
-
-        // Find the Player document associated with the logged-in User
-        const playerProfile = await Player.findOne({ user: userId, team: event.team });
-        if (!playerProfile) {
-            return res.status(404).json({ message: 'Player profile not found for this user and team.' });
-        }
-
-        // Find the player in the attendance list and update their status
-        const attendanceIndex = event.attendance.findIndex(att => att.player.toString() === playerProfile._id.toString());
-
-        if (attendanceIndex === -1) {
-            return res.status(404).json({ message: 'Player is not on the roster for this event.' });
-        }
-
-        event.attendance[attendanceIndex].status = status;
-        await event.save();
-
-        res.status(200).json({ message: 'Attendance updated successfully.', event });
-    } catch (error) {
-        res.status(500).json({ message: 'Server Error: Could not update attendance.', error: error.message });
+    if (!status) {
+      return res.status(400).json({ message: 'Attendance status is required.' });
     }
+
+    const event = await Event.findById(id);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found.' });
+    }
+
+    // Find the Player document associated with the logged-in User
+    const playerProfile = await Player.findOne({ user: userId, team: event.team });
+    if (!playerProfile) {
+      return res.status(404).json({ message: 'Player profile not found for this user and team.' });
+    }
+
+    // Find the player in the attendance list and update their status
+    const attendanceIndex = event.attendance.findIndex(att => att.player.toString() === playerProfile._id.toString());
+
+    if (attendanceIndex === -1) {
+      return res.status(404).json({ message: 'Player is not on the roster for this event.' });
+    }
+
+    event.attendance[attendanceIndex].status = status;
+    await event.save();
+
+    res.status(200).json({ message: 'Attendance updated successfully.', event });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error: Could not update attendance.', error: error.message });
+  }
 };
+
+// @desc    Log full match results including goals and player stats
+// @route   PUT /api/events/:id/log-match
+export const logMatchResult = async (req, res) => {
+  const { id } = req.params;
+  const coachId = req.user._id;
+  const { goalsFor, goalsAgainst, goalscorers = [], assists = [] } = req.body;
+
+  try {
+    const event = await Event.findById(id);
+    if (!event) return res.status(404).json({ message: 'Event not found.' });
+    if (event.eventType !== 'Match') return res.status(400).json({ message: 'Only matches can be logged.' });
+
+    // Verify ownership
+    const team = await Team.findOne({ _id: event.team, coach: coachId });
+    if (!team) return res.status(403).json({ message: 'Not authorized.' });
+
+    // Update Event Document
+    const totalAssists = assists.reduce((sum, a) => sum + (Number(a.amount) || 0), 0);
+    event.goalsFor = Number(goalsFor) || 0;
+    event.goalsAgainst = Number(goalsAgainst) || 0;
+    event.totalAssists = totalAssists;
+    event.matchLogged = true;
+
+    await event.save();
+
+    // Safely bulk update player stats using $inc
+    const bulkOps = [];
+
+    // Track which players we are updating to also inc appearance?
+    // Not explicitly asked, but good practice. For now, strictly stick to prompt: goals + assists.
+
+    for (const scorer of goalscorers) {
+      if (!scorer.playerId || !scorer.amount) continue;
+      bulkOps.push({
+        updateOne: {
+          filter: { _id: scorer.playerId, team: event.team },
+          update: { $inc: { 'stats.goals': Number(scorer.amount) } }
+        }
+      });
+    }
+
+    for (const assist of assists) {
+      if (!assist.playerId || !assist.amount) continue;
+      bulkOps.push({
+        updateOne: {
+          filter: { _id: assist.playerId, team: event.team },
+          update: { $inc: { 'stats.assists': Number(assist.amount) } }
+        }
+      });
+    }
+
+    if (bulkOps.length > 0) {
+      await Player.bulkWrite(bulkOps);
+    }
+
+    res.status(200).json({ message: 'Match result logged correctly.', event });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error.', error: error.message });
+  }
+};
+

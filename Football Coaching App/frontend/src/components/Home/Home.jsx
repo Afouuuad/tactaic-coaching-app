@@ -5,8 +5,7 @@ import Footer from '../shared/Footer';
 
 const Home = () => {
   return (
-    <div>
-      <Navbar />
+    <div className="min-h-screen bg-white bg-[linear-gradient(rgba(6,182,212,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.05)_1px,transparent_1px)] bg-[size:20px_20px]">
       <HeroSection />
       <Footer />
     </div>

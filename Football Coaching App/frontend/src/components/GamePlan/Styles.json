@@ -1,0 +1,50 @@
+{
+  "role_importance_matrix": {
+    "CB1_Stopper": {
+      "defensive_awareness": 4, "engagement": 4, "physical_contact": 3,
+      "speed": 1, "acceleration": 1, "finishing": 0, "heading": 3
+    },
+    "CB3_BallPlaying": {
+      "short_pass": 4, "long_pass": 4, "ball_control": 3, 
+      "defensive_awareness": 3, "stamina": 2, "finishing": 0
+    },
+    "GK1_LineKeeper": {
+      "positioning": 4, "reflexes": 4, "jumping": 3, "passing": 1
+    }
+  },
+
+  "style_logic": {
+    "High_Press": {
+      "description": "Aggressive pressure to win the ball high up the pitch.",
+      "slot_priorities": {
+        "CB_Slot_L": ["CB1_Stopper", "CB3_BallPlaying"], 
+        "CB_Slot_R": ["CB2_Sweeper", "CB3_BallPlaying"],
+        "ST_Slot": ["MS_MobileStriker", "ST_Poacher"]
+      }
+    },
+    "Possession": {
+      "description": "Control the flow through short passing and movement.",
+      "slot_priorities": {
+        "CB_Slot_L": ["CB3_BallPlaying", "CB2_Sweeper"],
+        "CB_Slot_R": ["CB3_BallPlaying", "CB1_Stopper"],
+        "ST_Slot": ["FS_FalseStriker", "SS_SecondStriker"]
+      }
+    }
+  },
+
+  "synergy_constraints": {
+    "CB_Pair": {
+      "forbidden_combinations": [["CB1_Stopper", "CB1_Stopper"]],
+      "recommended_combinations": [["CB1_Stopper", "CB2_Sweeper"], ["CB1_Stopper", "CB3_BallPlaying"]],
+      "rationale": "Avoid two aggressive Stoppers; one must cover the space behind."
+    }
+  }
+,
+  "style_priorities": {
+    "High_Press": {
+      "CB_Slot_1": ["CB1", "CB3"], 
+      "CDM_Slot": ["CM1", "B2B", "CDM"], 
+      "ST_Slot": ["MS", "ST", "CF"] 
+    }
+  }
+}

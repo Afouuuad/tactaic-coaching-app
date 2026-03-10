@@ -1,0 +1,12 @@
+[2026-03-09T23:51:42.131Z] createPlayer Error:
+ValidationError: User validation failed: email: Please fill a valid email address
+    at Document.invalidate (C:\Users\fouad\Desktop\tactaiq-test - Copy\Football Coaching App\backend\node_modules\mongoose\lib\document.js:3307:32)
+    at C:\Users\fouad\Desktop\tactaiq-test - Copy\Football Coaching App\backend\node_modules\mongoose\lib\document.js:3068:17
+    at C:\Users\fouad\Desktop\tactaiq-test - Copy\Football Coaching App\backend\node_modules\mongoose\lib\schemaType.js:1388:9
+    at process.processTicksAndRejections (node:internal/process/task_queues:84:11)
+
+Full error: {
+  "message": "User validation failed: email: Please fill a valid email address",
+  "errors": {},
+  "_message": "User validation failed"
+}

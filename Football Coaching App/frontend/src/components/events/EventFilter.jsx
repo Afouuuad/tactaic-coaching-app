@@ -2,7 +2,7 @@ import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { SlidersHorizontal, X } from 'lucide-react';
+import { SlidersHorizontal, X, Search, Calendar, Folder } from 'lucide-react';
 
 /**
  * A filter card component for the Events page.
@@ -25,60 +25,75 @@ const EventFilter = ({ setSearchText, setEventType, setDateFilter }) => {
   };
 
   return (
-    <div className="bg-gray-800 border border-gray-700 p-6 rounded-lg shadow-lg space-y-6">
-      <div className="flex items-center gap-3">
-        <SlidersHorizontal className="text-blue-400" />
-        <h2 className="text-xl font-bold text-white">Filter Events</h2>
+    <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm space-y-6 sticky top-24">
+      <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+        <div className="p-2 bg-cyan-50 text-cyan-600 rounded-lg">
+          <SlidersHorizontal size={20} />
+        </div>
+        <h2 className="text-lg font-bold text-slate-800 tracking-tight">Filters</h2>
       </div>
 
       {/* Search by Text */}
-      <div>
-        <Label className="text-gray-300">Search Events</Label>
-        <Input
-          id="eventSearchText"
-          type="text"
-          placeholder="e.g., Defensive Drills"
-          onChange={(e) => setSearchText(e.target.value)}
-          className="w-full mt-2 p-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-        />
+      <div className="space-y-2">
+        <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+          <Search size={14} /> Search
+        </Label>
+        <div className="relative border border-slate-200 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-cyan-500 focus-within:border-cyan-500 transition-all">
+          <Input
+            id="eventSearchText"
+            type="text"
+            placeholder="e.g., Tactics"
+            onChange={(e) => setSearchText(e.target.value)}
+            className="w-full bg-slate-50 border-0 focus-visible:ring-0 rounded-none text-slate-800 placeholder:text-slate-400 h-10"
+          />
+        </div>
       </div>
 
       {/* Event Type Filter */}
-      <div>
-        <Label className="text-gray-300">Event Type</Label>
-        <select
-          id="eventType"
-          onChange={(e) => setEventType(e.target.value)}
-          className="w-full mt-2 p-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-        >
-          <option value="">All Types</option>
-          <option value="Match">Match</option>
-          <option value="Training">Training</option>
-        </select>
+      <div className="space-y-2">
+        <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+          <Folder size={14} /> Type
+        </Label>
+        <div className="relative border border-slate-200 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-cyan-500 focus-within:border-cyan-500 transition-all">
+          <select
+            id="eventType"
+            onChange={(e) => setEventType(e.target.value)}
+            className="w-full bg-slate-50 border-0 outline-none text-slate-800 h-10 px-3 text-sm font-medium"
+          >
+            <option value="">All Types</option>
+            <option value="Match">Match</option>
+            <option value="Training">Training</option>
+          </select>
+        </div>
       </div>
 
       {/* Date Filter */}
-      <div>
-        <Label className="text-gray-300">Timeframe</Label>
-        <select
-          id="dateFilter"
-          onChange={(e) => setDateFilter(e.target.value)}
-          className="w-full mt-2 p-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-        >
-          <option value="">All Dates</option>
-          <option value="upcoming">Upcoming</option>
-          <option value="past">Past</option>
-        </select>
+      <div className="space-y-2">
+        <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+          <Calendar size={14} /> Timeframe
+        </Label>
+        <div className="relative border border-slate-200 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-cyan-500 focus-within:border-cyan-500 transition-all">
+          <select
+            id="dateFilter"
+            onChange={(e) => setDateFilter(e.target.value)}
+            className="w-full bg-slate-50 border-0 outline-none text-slate-800 h-10 px-3 text-sm font-medium"
+          >
+            <option value="">All Dates</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="past">Past</option>
+          </select>
+        </div>
       </div>
 
       {/* Clear Filters Button */}
       <div className="pt-2">
-        <Button 
+        <Button
           onClick={handleClearFilters}
-          className="w-full p-2 bg-gray-600 text-white rounded-md hover:bg-red-600 transition-colors duration-200 flex items-center justify-center gap-2"
+          variant="outline"
+          className="w-full bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 font-bold uppercase tracking-wider text-xs"
         >
-          <X size={16} />
-          Clear Filters
+          <X size={14} className="mr-2" />
+          Clear Fiters
         </Button>
       </div>
     </div>

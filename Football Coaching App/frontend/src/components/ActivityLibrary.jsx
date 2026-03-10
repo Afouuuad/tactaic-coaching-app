@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setSearchedQuery } from '@/redux/eventSlice';
+import Navbar from './shared/Navbar';
 
 const category = [
     "Developer",
@@ -49,6 +50,17 @@ const CategoryCarousel = () => {
             </Carousel>
         </div>
     );
+};
+
+const ActivityLibrary = () => {
+  return (
+    <>
+      <Navbar />
+      <div>
+        {/* ...existing content... */}
+      </div>
+    </>
+  );
 };
 
 export default CategoryCarousel;

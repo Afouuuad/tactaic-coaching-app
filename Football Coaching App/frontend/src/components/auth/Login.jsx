@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { PLAYER_API_END_POINT } from '@/utils/constant'; // 1. Using the correct API endpoint
+import { AUTH_API_END_POINT } from '@/utils/constant'; // 1. Using the correct API endpoint
 import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoading, setUser } from '@/redux/authSlice';
@@ -12,17 +12,17 @@ const InputField = ({ icon: Icon, type, placeholder, value, onChange, name }) =>
     <div className="relative">
         {Icon && (
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Icon className="text-gray-400" size={20} />
+                <Icon className="text-gray-400" size={20} />
             </div>
         )}
         <input
-          type={type}
-          name={name}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          className={`w-full ${Icon ? 'pl-12' : 'pl-4'} pr-4 py-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-800 transition-colors`}
-          required
+            type={type}
+            name={name}
+            placeholder={placeholder}
+            value={value}
+            onChange={onChange}
+            className={`w-full ${Icon ? 'pl-12' : 'pl-4'} pr-4 py-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-800 transition-colors`}
+            required
         />
     </div>
 );
@@ -46,30 +46,48 @@ const Login = () => {
         e.preventDefault();
         try {
             dispatch(setLoading(true));
-            const res = await axios.post(`${PLAYER_API_END_POINT}/login`, input, {
+            const res = await axios.post(`${AUTH_API_END_POINT}/login`, input, {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
             });
 
             if (res.data.success) {
-                dispatch(setUser(res.data.user));
-                navigate("/");
-                toast.success(res.data.message);
+                dispatch(setUser(res.data)); // Passes {user, token, success} to Redux
+                const loggedInUser = res.data.user;
+
+                // Redirect based on team setup status
+                if (!loggedInUser.teams || loggedInUser.teams.length === 0) {
+                    navigate("/team-setup");
+                } else {
+                    navigate("/");
+                }
+
+                toast.success(res.data.message || "Logged in successfully", {
+                    style: { backgroundColor: "#28a745", color: "#FFFFFF" },
+                });
             }
         } catch (error) {
             console.error("Error during login:", error);
-            toast.error(error.response?.data?.message || "Login failed. Please check credentials.");
+            toast.error(error.response?.data?.message || "Login failed. Please check credentials.", {
+                style: { backgroundColor: "#dc3545", color: "#FFFFFF" },
+            });
         } finally {
             dispatch(setLoading(false));
         }
     };
 
-    // Redirect if user is already logged in
+    // Redirect if user is already logged in (AND we have a valid token)
+    const { token } = useSelector(store => store.auth);
     useEffect(() => {
-        if (user) {
-            navigate("/");
+        const isMalformed = token === 'null' || token === 'undefined' || token === '[object Object]';
+        if (user && token && !isMalformed) {
+            if (!user.teams || user.teams.length === 0) {
+                navigate("/team-setup");
+            } else {
+                navigate("/");
+            }
         }
-    }, [user, navigate]);
+    }, [user, token, navigate]);
 
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 font-sans">

@@ -1,0 +1,86 @@
+{
+    "GK_Goalkeeper": {
+        "Diving": 5,
+        "Reflexes": 5,
+        "Handling": 4,
+        "Speed": 3,
+        "Kicking": 3,
+        "Positioning": 4
+    },
+    "CB_Stopper": {
+        "Defensive_Awareness": 5,
+        "Marking": 5,
+        "Tackling": 5,
+        "Aggression": 4,
+        "Strength": 4,
+        "Heading": 3,
+        "Jumping": 3
+    },
+    "CB_BallPlaying": {
+        "Defensive_Awareness": 4,
+        "Marking": 4,
+        "Tackling": 4,
+        "Passing": 5,
+        "Vision": 4,
+        "Composure": 4,
+        "Ball_Control": 3
+    },
+    "FB_FullBack": {
+        "Pace": 5,
+        "Stamina": 5,
+        "Tackling": 3,
+        "Passing": 3,
+        "Crossing": 4,
+        "Dribbling": 3,
+        "Defensive_Awareness": 3
+    },
+    "CDM_Destroyer": {
+        "Tackling": 5,
+        "Aggression": 5,
+        "Strength": 5,
+        "Stamina": 4,
+        "Defensive_Awareness": 4,
+        "Passing": 2
+    },
+    "CM_BoxToBox": {
+        "Stamina": 5,
+        "Passing": 4,
+        "Tackling": 3,
+        "Finishing": 3,
+        "Vision": 4,
+        "Work_Rate": 5,
+        "Strength": 3
+    },
+    "CAM_Playmaker": {
+        "Passing": 5,
+        "Vision": 5,
+        "Dribbling": 4,
+        "Ball_Control": 5,
+        "Composure": 4,
+        "Finishing": 3
+    },
+    "W_Winger": {
+        "Pace": 5,
+        "Dribbling": 5,
+        "Crossing": 4,
+        "Agility": 4,
+        "Stamina": 3,
+        "Finishing": 3
+    },
+    "ST_TargetMan": {
+        "Strength": 5,
+        "Heading": 5,
+        "Finishing": 4,
+        "Jumping": 4,
+        "Composure": 3,
+        "Ball_Control": 3
+    },
+    "ST_Poacher": {
+        "Finishing": 5,
+        "Reflexes": 4,
+        "Pace": 4,
+        "Positioning": 5,
+        "Composure": 4,
+        "Dribbling": 3
+    }
+}
